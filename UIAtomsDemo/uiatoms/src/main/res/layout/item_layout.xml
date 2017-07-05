@@ -8,6 +8,9 @@
         <variable
             name="viewModel"
             type="Object"/>
+        <variable
+            name="item"
+            type="com.neurospeech.uiatoms.ListItem"/>
     </data>
 
     <LinearLayout
