@@ -18,27 +18,66 @@ import java.io.Serializable;
  * Created by ackav on 04-08-2017.
  */
 
-public class AtomNavigator implements Application.ActivityLifecycleCallbacks {
+public class AtomNavigator {
 
     public static final String ATOM_LAYOUT_ID = "atom-layout-id";
     public static final String ATOM_VIEW_MODEL = "atom-view-model";
     public static final String ATOM_MODEL_PARCELABLE = "atom-model-parcelable";
     public static final String ATOM_MODEL_SERIALIZABLE = "atom-model-serializable";
-    private static AtomNavigator navigator;
-    private final Context context;
-    private int modelId;
-    private int viewModelId;
 
-    private AtomNavigator(Context context){
+    /**
+     *
+     */
+    private static AtomNavigator navigator;
+
+    private final Context context;
+    public final int viewModelId;
+    public final int modelId;
+
+    private AtomNavigator(Application context, int modelId, int viewModelId){
         this.context = context;
+        this.viewModelId = viewModelId;
+        this.modelId = modelId;
+        context.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+            @Override
+            public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                initializeActivity(activity,savedInstanceState);
+            }
+
+            @Override
+            public void onActivityStarted(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityResumed(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityPaused(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivityStopped(Activity activity) {
+
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+
+            }
+
+            @Override
+            public void onActivityDestroyed(Activity activity) {
+
+            }
+        });
     }
 
     public static void register(Application context, int modelId, int viewModelId){
-        navigator = new AtomNavigator(context);
-
-        context.registerActivityLifecycleCallbacks(navigator);
-        navigator.modelId = modelId;
-        navigator.viewModelId = viewModelId;
+        navigator = new AtomNavigator(context, modelId, viewModelId);
     }
 
 
@@ -55,8 +94,9 @@ public class AtomNavigator implements Application.ActivityLifecycleCallbacks {
         return new NavigationBuilder(context);
     }
 
-    @Override
-    public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+
+
+    public void initializeActivity(Activity activity, Bundle savedInstanceState) {
         Intent intent = activity.getIntent();
 
         int layoutId = intent.getIntExtra(ATOM_LAYOUT_ID,0);
@@ -68,6 +108,10 @@ public class AtomNavigator implements Application.ActivityLifecycleCallbacks {
             Class<AtomViewModel> viewModelClass = (Class<AtomViewModel>) intent.getSerializableExtra(ATOM_VIEW_MODEL);
             AtomViewModel viewModel = viewModelClass.newInstance();
             binding.setVariable(viewModelId,viewModel);
+
+
+            binding.getRoot().setTag(R.id.viewModel,viewModel);
+
 
             if(intent.hasExtra(ATOM_MODEL_PARCELABLE)){
                 Parcelable model = intent.getParcelableExtra(ATOM_MODEL_PARCELABLE);
@@ -86,44 +130,15 @@ public class AtomNavigator implements Application.ActivityLifecycleCallbacks {
 
     }
 
-    @Override
-    public void onActivityStarted(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivityResumed(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivityPaused(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivityStopped(Activity activity) {
-
-    }
-
-    @Override
-    public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
-
-    }
-
-    @Override
-    public void onActivityDestroyed(Activity activity) {
-
-    }
 
     public static class NavigationBuilder{
 
 
         private final Context context;
         private int layoutId;
-        private Class<Activity> activityClass;
+        private Class<? extends Activity> activityClass;
         private Object modelValue;
-        private Class<AtomViewModel> viewModelClass;
+        private Class<? extends AtomViewModel> viewModelClass;
 
         public NavigationBuilder(Context context) {
             this.context = context;
@@ -134,7 +149,7 @@ public class AtomNavigator implements Application.ActivityLifecycleCallbacks {
             return this;
         }
 
-        public NavigationBuilder activity(Class<Activity> activityClass){
+        public NavigationBuilder activity(Class<? extends Activity> activityClass){
             this.activityClass = activityClass;
             return this;
         }
@@ -144,7 +159,7 @@ public class AtomNavigator implements Application.ActivityLifecycleCallbacks {
             return this;
         }
 
-        public NavigationBuilder viewModel(Class<AtomViewModel> viewModelClass){
+        public NavigationBuilder viewModel(Class<? extends AtomViewModel> viewModelClass){
             this.viewModelClass = viewModelClass;
             return  this;
         }

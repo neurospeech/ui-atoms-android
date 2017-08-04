@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="observableAdapterTag" type="id"/>
+    <item name="viewModel" type="id"/>
+    <item name="atomCommand" type="id"/>
+    <item name="atomCommandEnabled" type="id"/>
+    <item name="atomCommandParamter" type="id"/>
+    <item name="atomCommandAction" type="id"/>
 </resources>
