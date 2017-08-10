@@ -24,8 +24,14 @@ public class AtomCommand<T> {
         this.action = action;
     }
 
+    public void execute(T p){
+        parameter.set(p);
+        if(enabled.get()){
+            action.run(p);
+        }
+    }
 
-    @BindingAdapter(value = {"command", "commandParameter"}, requireAll = false)
+    @BindingAdapter(value = {"clickCommand", "commandParameter"}, requireAll = false)
     public static void setAdapter(View button, AtomCommand command, Object parameter){
 
         Observable.OnPropertyChangedCallback pc;
@@ -54,10 +60,7 @@ public class AtomCommand<T> {
             button.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    if (command.enabled.get()) {
-                        command.action.run(command.parameter);
-                    }
+                    command.execute(parameter);
                 }
             });
         }
