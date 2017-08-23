@@ -2,8 +2,10 @@ package com.neurospeech.uiatoms;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.os.Bundle;
@@ -51,12 +53,12 @@ public class AtomNavigator {
 
             @Override
             public void onActivityResumed(Activity activity) {
-
+                registerBroadcast(activity,AtomViewModel.get(activity));
             }
 
             @Override
             public void onActivityPaused(Activity activity) {
-
+                unregisterBroadcast(activity,AtomViewModel.get(activity));
             }
 
             @Override
@@ -123,11 +125,51 @@ public class AtomNavigator {
             }
 
             activity.setContentView(binding.getRoot());
+            registerBroadcast(activity, viewModel);
+
 
         }catch (Exception ex){
             ex.printStackTrace();
         }
 
+    }
+
+    public void registerBroadcast(Context activity, AtomViewModel viewModel) {
+        // setup broadcaster...
+        if(viewModel==null)
+            return;
+
+        viewModel.setBroadcaster((message,item)->{
+            Intent bi = new Intent(message);
+            bi.putExtra("parameter", (Serializable) item);
+            activity.sendBroadcast(bi);
+        });
+
+        for (Object item : viewModel.subscriptions) {
+            AtomSubscription subscription = (AtomSubscription)item;
+            subscription.tag = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    Object parameter = intent.getSerializableExtra("parameter");
+                    subscription.action.run(parameter);
+                }
+            };
+
+            activity.registerReceiver((BroadcastReceiver)subscription.tag, new IntentFilter(((AtomSubscription) item).message));
+        }
+    }
+
+    public void unregisterBroadcast(Context context, AtomViewModel viewModel){
+        if(viewModel==null)
+            return;
+        for(Object item: viewModel.subscriptions){
+            AtomSubscription subscription = (AtomSubscription) item;
+            if(subscription.tag != null) {
+                BroadcastReceiver br = (BroadcastReceiver) subscription.tag;
+                context.unregisterReceiver(br);
+                subscription.tag = null;
+            }
+        }
     }
 
 
