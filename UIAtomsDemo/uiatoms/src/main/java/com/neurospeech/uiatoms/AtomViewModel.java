@@ -11,7 +11,7 @@ import java.util.ArrayList;
  * Created by ackav on 04-08-2017.
  */
 
-public class AtomViewModel<T>
+public class AtomViewModel
 {
 
     public static AtomViewModel get(View view){
@@ -31,12 +31,15 @@ public class AtomViewModel<T>
         return (AtomViewModel)view.getTag(R.id.viewModel);
     }
 
-    public final ObservableField<T> model = new ObservableField<T>(null);
-
     private ArrayList<Closeable> closables = new ArrayList<>();
 
     public final ArrayList<AtomSubscription> subscriptions = new ArrayList<AtomSubscription>();
 
+    /***
+     * Register any resource that implements closeable, it will be closed
+     * when viewModel is disposed
+     * @param closeable
+     */
     public void register(Closeable closeable){
         closables.add(closeable);
     }
@@ -45,13 +48,38 @@ public class AtomViewModel<T>
 
     }
 
-    public <Tx> void onMessage(String message, Action<Tx> action){
-        subscriptions.add(new AtomSubscription(message,action));
+    /***
+     * Subscribe for channel when activity/fragment only when active.
+     * This method must be called in constructor only
+     * @param channel
+     * @param action
+     * @param <Tx>
+     */
+    public <Tx> void sunscribe(String channel, Action<Tx> action){
+        subscriptions.add(new AtomSubscription(channel,action, false));
     }
 
-    public <Tx> void broadcast(String message, Tx item){
+    /***
+     * Subscribe for channel when activity/fragment is visible and also
+     * in background.
+     * This method must be called in constructor only
+     * @param channel
+     * @param action
+     * @param <Tx>
+     */
+    public <Tx> void sunscribeEvenInBackground(String channel, Action<Tx> action){
+        subscriptions.add(new AtomSubscription(channel,action, true));
+    }
+
+    /***
+     * Broadcast item to channel
+     * @param channel
+     * @param item
+     * @param <Tx>
+     */
+    public <Tx> void broadcast(String channel, Tx item){
         if(this.broadcaster != null){
-            this.broadcaster.broadcast(message,item);
+            this.broadcaster.broadcast(channel,item);
         }
     }
 

@@ -36,6 +36,8 @@ public class AtomNavigator {
     public final int viewModelId;
     public final int modelId;
 
+    public static Activity currentActivity;
+
     private AtomNavigator(Application context, int modelId, int viewModelId){
         this.context = context;
         this.viewModelId = viewModelId;
@@ -43,27 +45,31 @@ public class AtomNavigator {
         context.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+                currentActivity = activity;
                 initializeActivity(activity,savedInstanceState);
+                registerBroadcast(activity, AtomViewModel.get(activity),true);
             }
 
             @Override
             public void onActivityStarted(Activity activity) {
-
+                currentActivity = activity;
             }
 
             @Override
             public void onActivityResumed(Activity activity) {
-                registerBroadcast(activity,AtomViewModel.get(activity));
+                currentActivity = activity;
+                registerBroadcast(activity,AtomViewModel.get(activity), false);
             }
 
             @Override
             public void onActivityPaused(Activity activity) {
-                unregisterBroadcast(activity,AtomViewModel.get(activity));
+                currentActivity = activity;
+                unregisterBroadcast(activity,AtomViewModel.get(activity), false);
             }
 
             @Override
             public void onActivityStopped(Activity activity) {
-
+                currentActivity = null;
             }
 
             @Override
@@ -73,7 +79,12 @@ public class AtomNavigator {
 
             @Override
             public void onActivityDestroyed(Activity activity) {
-
+                AtomViewModel viewModel = AtomViewModel.get(activity);
+                if(viewModel != null) {
+                    unregisterBroadcast(activity, viewModel, true);
+                    viewModel.dispose();
+                }
+                currentActivity = null;
             }
         });
     }
@@ -125,7 +136,6 @@ public class AtomNavigator {
             }
 
             activity.setContentView(binding.getRoot());
-            registerBroadcast(activity, viewModel);
 
 
         }catch (Exception ex){
@@ -134,7 +144,7 @@ public class AtomNavigator {
 
     }
 
-    public void registerBroadcast(Context activity, AtomViewModel viewModel) {
+    public void registerBroadcast(Context activity, AtomViewModel viewModel, boolean background) {
         // setup broadcaster...
         if(viewModel==null)
             return;
@@ -147,6 +157,8 @@ public class AtomNavigator {
 
         for (Object item : viewModel.subscriptions) {
             AtomSubscription subscription = (AtomSubscription)item;
+            if(subscription.background != background)
+                continue;
             subscription.tag = new BroadcastReceiver() {
                 @Override
                 public void onReceive(Context context, Intent intent) {
@@ -159,11 +171,13 @@ public class AtomNavigator {
         }
     }
 
-    public void unregisterBroadcast(Context context, AtomViewModel viewModel){
+    public void unregisterBroadcast(Context context, AtomViewModel viewModel, boolean background){
         if(viewModel==null)
             return;
         for(Object item: viewModel.subscriptions){
             AtomSubscription subscription = (AtomSubscription) item;
+            if(subscription.background != background)
+                continue;
             if(subscription.tag != null) {
                 BroadcastReceiver br = (BroadcastReceiver) subscription.tag;
                 context.unregisterReceiver(br);
@@ -188,6 +202,7 @@ public class AtomNavigator {
 
         public NavigationBuilder layout(@LayoutRes int layoutId){
             this.layoutId = layoutId;
+            activityClass = AtomActivity.class;
             return this;
         }
 
@@ -209,11 +224,6 @@ public class AtomNavigator {
         public void start(){
             Intent intent = createIntent(context);
             context.startActivity(intent);
-        }
-
-        public void startForResult(Activity activity, int requestCode){
-            Intent intent = createIntent(activity);
-            activity.startActivityForResult(intent, requestCode);
         }
 
         @NonNull

@@ -1,7 +1,5 @@
 package com.neurospeech.uiatomsdemo;
 
-import com.neurospeech.uiatomsdemo.viewmodels.LoginViewModel;
-
 import org.junit.Test;
 
 import static org.junit.Assert.*;

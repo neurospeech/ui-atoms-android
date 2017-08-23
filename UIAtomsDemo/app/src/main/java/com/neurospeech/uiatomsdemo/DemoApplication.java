@@ -14,7 +14,9 @@ public class DemoApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        AtomNavigator.register(this,0, com.neurospeech.uiatomsdemo.BR.viewModel);
+        AtomNavigator.register(this,
+                com.neurospeech.uiatomsdemo.BR.model,
+                com.neurospeech.uiatomsdemo.BR.viewModel);
 
     }
 }

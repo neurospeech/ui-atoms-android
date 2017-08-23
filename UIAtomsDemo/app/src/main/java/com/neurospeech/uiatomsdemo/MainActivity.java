@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.neurospeech.uiatoms.AtomNavigator;
-import com.neurospeech.uiatomsdemo.viewmodels.LoginViewModel;
+import com.neurospeech.uiatomsdemo.viewmodels.TaskEditorViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,10 +16,11 @@ public class MainActivity extends AppCompatActivity {
 
         AtomNavigator.getNavigator()
                 .activityIntent()
-                .activity(LoginActivity.class)
-                .layout(R.layout.activity_login)
-                .viewModel(LoginViewModel.class)
+                .layout(R.layout.activity_task_list)
+                .viewModel(TaskEditorViewModel.class)
                 .start();
+
+        finish();
 
     }
 }
