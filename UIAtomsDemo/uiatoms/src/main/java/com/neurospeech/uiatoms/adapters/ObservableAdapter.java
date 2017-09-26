@@ -20,6 +20,7 @@ import com.neurospeech.uiatoms.AtomListView;
 import com.neurospeech.uiatoms.BR;
 import com.neurospeech.uiatoms.ListItem;
 import com.neurospeech.uiatoms.R;
+import com.neurospeech.uiatoms.ReflectionHelper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,8 +35,8 @@ public class ObservableAdapter<T> extends RecyclerView.Adapter<ObservableAdapter
     private final int layoutId;
     private final ObservableList.OnListChangedCallback<ObservableList<T>> callback;
     private final Object viewModel;
-    private final int modelId;
-    private final int viewModelId;
+    //private final int modelId;
+    //private final int viewModelId;
     private final ObservableList.OnListChangedCallback<ObservableList<T>> selectionCallback;
 
     private final ObservableField<T> selectedItem = new ObservableField<T>();
@@ -61,8 +62,8 @@ public class ObservableAdapter<T> extends RecyclerView.Adapter<ObservableAdapter
         this.items = items;
         this.layoutId = layoutId;
         this.viewModel = viewModel;
-        this.modelId = modelId;
-        this.viewModelId = viewModelId;
+        //this.modelId = modelId;
+        //this.viewModelId = viewModelId;
         this.selectedItems = selectedItems;
 
         this.selectionCallback = new ObservableList.OnListChangedCallback<ObservableList<T>>(){
@@ -171,14 +172,15 @@ public class ObservableAdapter<T> extends RecyclerView.Adapter<ObservableAdapter
     public void onBindViewHolder(ObservableViewHolder holder, int position) {
         T item = items.get(position);
         if(holder.model!=item) {
-            holder.dataBinding.setVariable(modelId, item);
+            //holder.dataBinding.setVariable(modelId, item);
+            ReflectionHelper.run(holder.dataBinding,"set",item);
             holder.model = item;
         }
-        if(viewModelId>0){
-            if(holder.viewModel != viewModel) {
-                holder.dataBinding.setVariable(viewModelId, viewModel);
-                holder.viewModel = viewModel;
-            }
+        if(holder.viewModel != viewModel) {
+            //holder.dataBinding.getClass().getMethods()
+            //holder.dataBinding.setVariable(viewModelId, viewModel);
+            ReflectionHelper.run(holder.dataBinding,"set",viewModel);
+            holder.viewModel = viewModel;
         }
         try{
             holder.updateSelected = false;

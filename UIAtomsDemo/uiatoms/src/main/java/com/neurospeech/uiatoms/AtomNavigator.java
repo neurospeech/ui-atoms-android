@@ -33,15 +33,18 @@ public class AtomNavigator {
     private static AtomNavigator navigator;
 
     private final Context context;
-    public final int viewModelId;
-    public final int modelId;
+    //public final int viewModelId;
+    //public final int modelId;
 
     public static Activity currentActivity;
 
-    private AtomNavigator(Application context, int modelId, int viewModelId){
+    private AtomNavigator(Application context
+                          /* ,int modelId */
+                          /* ,int viewModelId */
+                          ){
         this.context = context;
-        this.viewModelId = viewModelId;
-        this.modelId = modelId;
+        //this.viewModelId = viewModelId;
+        //this.modelId = modelId;
         context.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
             @Override
             public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
@@ -90,7 +93,7 @@ public class AtomNavigator {
     }
 
     public static void register(Application context, int modelId, int viewModelId){
-        navigator = new AtomNavigator(context, modelId, viewModelId);
+        navigator = new AtomNavigator(context);//, modelId, viewModelId);
     }
 
 
@@ -120,7 +123,7 @@ public class AtomNavigator {
             ViewDataBinding binding = DataBindingUtil.inflate(LayoutInflater.from(activity), layoutId, null, false);
             Class<AtomViewModel> viewModelClass = (Class<AtomViewModel>) intent.getSerializableExtra(ATOM_VIEW_MODEL);
             AtomViewModel viewModel = viewModelClass.newInstance();
-            binding.setVariable(viewModelId,viewModel);
+            //binding.setVariable(viewModelId,viewModel);
 
 
             binding.getRoot().setTag(R.id.viewModel,viewModel);
@@ -128,11 +131,11 @@ public class AtomNavigator {
 
             if(intent.hasExtra(ATOM_MODEL_PARCELABLE)){
                 Parcelable model = intent.getParcelableExtra(ATOM_MODEL_PARCELABLE);
-                binding.setVariable(modelId, model);
+                //binding.setVariable(modelId, model);
             }
             if(intent.hasExtra(ATOM_MODEL_SERIALIZABLE)){
                 Serializable model = intent.getParcelableExtra(ATOM_MODEL_SERIALIZABLE);
-                binding.setVariable(modelId, model);
+                //binding.setVariable(modelId, model);
             }
 
             activity.setContentView(binding.getRoot());

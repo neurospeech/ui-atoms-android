@@ -14,6 +14,10 @@ import java.util.ArrayList;
 public class AtomViewModel
 {
 
+    
+
+
+
     public static AtomViewModel get(View view){
         if(view==null)
             return null;
