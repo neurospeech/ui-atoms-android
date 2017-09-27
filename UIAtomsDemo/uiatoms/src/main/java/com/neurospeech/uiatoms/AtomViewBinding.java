@@ -1,12 +1,19 @@
 package com.neurospeech.uiatoms;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
 import android.support.annotation.LayoutRes;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+
+import java.io.Closeable;
+import java.io.Serializable;
 
 /**
  * Created by ackav on 27-09-2017.
@@ -56,9 +63,79 @@ public class AtomViewBinding {
             }
             if (e != null) {
                 e.register((AtomLifeCycle) this.viewModel);
+
+                this.viewModel.setBroadcaster(new AtomViewModel.Broadcaster() {
+                    @Override
+                    public void broadcast(String message, Object item) {
+                        Intent bi = new Intent(message);
+                        bi.putExtra("parameter", (Serializable) item);
+                        activity.sendBroadcast(bi);
+                    }
+                });
+
+                if (this.viewModel.subscriptions.size() > 0) {
+                    for (AtomSubscription s : this.viewModel.subscriptions) {
+                        if (!s.background)
+                            continue;
+                        register(s);
+                    }
+                }
+
+
+                e.register(new AtomLifeCycle() {
+                    @Override
+                    public void onInit() {
+
+                    }
+
+                    @Override
+                    public void onPause() {
+                        for(AtomSubscription s: viewModel.subscriptions){
+                            if(s.background)
+                                continue;
+                            unregister(s);
+                        }
+
+                    }
+
+                    @Override
+                    public void onResume() {
+                        for(AtomSubscription s: viewModel.subscriptions){
+                            if(s.background)
+                                continue;
+                            register(s);
+                        }
+                    }
+
+                    @Override
+                    public void onDispose() {
+                        for(AtomSubscription s: viewModel.subscriptions){
+                            if(!s.background)
+                                continue;
+                            unregister(s);
+                        }
+                    }
+                });
+
             }
         }
         return this;
+    }
+
+    private void unregister(AtomSubscription s) {
+        activity.unregisterReceiver((BroadcastReceiver)s.tag);
+    }
+
+    private void register(final AtomSubscription s) {
+        s.tag = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Object parameter = intent.getSerializableExtra("parameter");
+                s.action.run(parameter);
+            }
+        };
+
+        activity.registerReceiver((BroadcastReceiver) s.tag, new IntentFilter(s.message));
     }
 
     public View inflate(@LayoutRes int layoutId){

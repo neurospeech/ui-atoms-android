@@ -2,9 +2,9 @@ package com.neurospeech.uiatomsdemo;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 
-import com.neurospeech.uiatoms.AtomNavigator;
 import com.neurospeech.uiatoms.DI;
 import com.neurospeech.uiatomsdemo.services.LoginService;
 import com.neurospeech.uiatomsdemo.services.LoginServiceAPI;
@@ -24,8 +24,9 @@ public class DemoApplication extends Application {
 
         DI.put(Context.class, this);
         DI.put(LoginServiceAPI.class, (new LoginService()).api);
+        DI.put(Handler.class, new Handler());
 
-        AtomNavigator.register(this);
+        //AtomNavigator.register(this);
 
         Log.d("",Linq.class.getCanonicalName());
 

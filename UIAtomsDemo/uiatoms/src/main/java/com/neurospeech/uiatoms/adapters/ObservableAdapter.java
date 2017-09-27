@@ -53,11 +53,8 @@ public class ObservableAdapter<T> extends RecyclerView.Adapter<ObservableAdapter
 
     private ObservableList<T> selectedItems;
 
-    public ObservableAdapter(ObservableList<T> items, @NonNull ObservableList<T> selectedItems, ItemBinding<T> binding){
-        this(items, selectedItems, binding.getLayoutId(),binding.getVariableId(),binding.getViewModelId(),binding.getViewModel());
-    }
 
-    public ObservableAdapter(ObservableList<T> items, @NonNull ObservableList<T> selectedItems, @LayoutRes int layoutId, int modelId, int viewModelId, Object viewModel)  {
+    public ObservableAdapter(ObservableList<T> items, @NonNull ObservableList<T> selectedItems, @LayoutRes int layoutId, Object viewModel)  {
         super();
         this.items = items;
         this.layoutId = layoutId;
@@ -215,7 +212,8 @@ public class ObservableAdapter<T> extends RecyclerView.Adapter<ObservableAdapter
 
         public ObservableViewHolder(ViewDataBinding dataBinding) {
             super(dataBinding.getRoot());
-            dataBinding.setVariable(BR.item,this);
+            //dataBinding.setVariable(BR.item,this);
+            ReflectionHelper.run(dataBinding,"set",this);
             this.dataBinding = dataBinding;
         }
 
@@ -236,24 +234,20 @@ public class ObservableAdapter<T> extends RecyclerView.Adapter<ObservableAdapter
     }
 
 
-    @BindingAdapter(value = {"items","selectedItems", "allowMultipleSelection", "itemBinding", "layout","viewModel"},requireAll = false)
+    @BindingAdapter(value = {"items","selectedItems", "allowMultipleSelection", "layout","viewModel"},requireAll = false)
     public static <T> void setAdapter(
             RecyclerView view,
             ObservableList<T> items,
             ObservableList<T> selectedItems,
             Boolean allowMultipleSelection,
-            ItemBinding<T> itemBinding,
             int layoutResId,
             Object viewModel) {
 
-        if(itemBinding==null){
-            itemBinding = ItemBinding.of(BR.model, layoutResId, viewModel == null ? 0 : BR.viewModel, viewModel );
-        }
 
         if(selectedItems==null)
             selectedItems = new ObservableArrayList<T>();
 
-        ObservableAdapter<T> adapter = new ObservableAdapter<T>(items, selectedItems, itemBinding);
+        ObservableAdapter<T> adapter = new ObservableAdapter<T>(items, selectedItems, layoutResId, viewModel);
         adapter.setAllowMultipleSelection(allowMultipleSelection != null && allowMultipleSelection.booleanValue());
         view.setAdapter(adapter);
         view.setTag(R.id.observableAdapterTag,adapter);
@@ -266,21 +260,17 @@ public class ObservableAdapter<T> extends RecyclerView.Adapter<ObservableAdapter
     }
 
 
-    @BindingAdapter(value = {"items","allowMultipleSelection","itemBinding", "layout", "viewModel"},requireAll = false)
-    public static <T> void setAdapter(RecyclerView view, T[] items,Boolean allowMultipleSelection,ItemBinding<T> itemBinding, int layoutResId, Object viewModel) {
+    @BindingAdapter(value = {"items","allowMultipleSelection", "layout", "viewModel"},requireAll = false)
+    public static <T> void setAdapter(RecyclerView view, T[] items,Boolean allowMultipleSelection,int layoutResId, Object viewModel) {
 
         if(items==null){
             return;
         }
 
-        if(itemBinding==null){
-            itemBinding = ItemBinding.of(BR.model, layoutResId, viewModel == null ? 0 : BR.viewModel, viewModel );
-        }
-
 
         ObservableArrayList<T> list = new ObservableArrayList<T>();
         list.addAll(Arrays.asList(items));
-        ObservableAdapter<T> adapter = new ObservableAdapter<T>(list, new ObservableArrayList<T>(), itemBinding);
+        ObservableAdapter<T> adapter = new ObservableAdapter<T>(list, new ObservableArrayList<T>(), layoutResId, viewModel);
         adapter.setAllowMultipleSelection(allowMultipleSelection != null && allowMultipleSelection.booleanValue());
         view.setAdapter(adapter);
         view.setTag(R.id.observableAdapterTag,adapter);

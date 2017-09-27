@@ -1,5 +1,7 @@
 package com.neurospeech.uiatoms;
 
+import android.os.Handler;
+
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,8 +14,18 @@ public class DI {
 
     static HashMap<Class,Registration> registry = new HashMap<>();
 
+    static{
+        DI.register(AtomLogger.class);
+        DI.register(ProgressIndicator.class);
+        DI.put(Handler.class,new Handler());
+    }
+
 
     public static DIScope global = new DIScope();
+
+    public static <T> void register(Class<T> forClass){
+        register(forClass,forClass);
+    }
 
     public static <T> void register(Class<? extends T> tClass, Class<T> forClass){
         registry.put(forClass,new Registration(tClass, (scope) -> createScoped(forClass,tClass, global) ));

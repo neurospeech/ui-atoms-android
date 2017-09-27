@@ -8,4 +8,6 @@ public interface AtomLifeCycleProvider {
 
     AtomLifeCycleElement getLifeCycleElement();
 
+    void disposeLifeCycleElement();
+
 }

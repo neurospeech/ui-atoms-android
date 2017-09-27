@@ -10,10 +10,14 @@ public class AtomActivity extends AppCompatActivity
     implements AtomLifeCycleProvider
 {
 
-    AtomLifeCycleElement lifeCycleProvider;
+    AtomLifeCycleElement lifeCycleProvider = new AtomLifeCycleElement();
 
     public AtomLifeCycleElement getLifeCycleElement() {
         return lifeCycleProvider;
+    }
+
+    public void disposeLifeCycleElement(){
+        lifeCycleProvider.dispose();
     }
 
     @Override

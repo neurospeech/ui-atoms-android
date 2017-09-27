@@ -33,4 +33,10 @@ public class AtomLifeCycleElement {
         }
     }
 
+    public void dispose() {
+        if(this.lifeCycles==null)
+            return;
+        this.lifeCycles.clear();
+        this.lifeCycles = null;
+    }
 }
