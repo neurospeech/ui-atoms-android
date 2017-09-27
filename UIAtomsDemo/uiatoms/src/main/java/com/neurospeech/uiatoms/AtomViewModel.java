@@ -163,11 +163,10 @@ public class AtomViewModel
         return returnField;
     }
 
-    public <T,T1> AtomField<T> watch(AtomField<T1> field, Funcs.Func1<T1,T> func){
-        return privateWatch(true, () -> func.call(field.get()), field );
+    public <T> AtomWatcher<T> watch(AtomField... fields){
+        AtomWatcher<T> watcher = new AtomWatcher<T>(fields);
+        register(watcher);
+        return watcher;
     }
 
-    public <T,T1,T2> AtomField<T> watch(AtomField<T1> field1, AtomField<T2> field2, Funcs.Func2<T1,T2,T> func){
-        return privateWatch(true, () -> func.call(field1.get(),field2.get()), field1,field2);
-    }
 }

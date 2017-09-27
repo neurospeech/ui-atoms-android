@@ -70,11 +70,13 @@ public class AtomView extends FrameLayout {
         }
 
         if(viewModel!=null){
-            binding.setVariable(AtomNavigator.getNavigator().viewModelId, viewModel);
+            //binding.setVariable(AtomNavigator.getNavigator().viewModelId, viewModel);
+            ReflectionHelper.run(binding,"set",viewModel);
         }
 
         if(model!=null){
-            binding.setVariable(AtomNavigator.getNavigator().modelId,model);
+            //binding.setVariable(AtomNavigator.getNavigator().modelId,model);
+            ReflectionHelper.run(binding,"set",model);
         }
 
     }

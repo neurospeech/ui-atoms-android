@@ -51,6 +51,9 @@ public class TaskEditorViewModel extends AtomViewModel {
         this.addCommand = new AtomCommand( c-> onAddCommand());
 
         this.removeCommand =new AtomCommand<Task>( task -> onRemoveCommand(task));
+
+        
+
     }
 
     /**
