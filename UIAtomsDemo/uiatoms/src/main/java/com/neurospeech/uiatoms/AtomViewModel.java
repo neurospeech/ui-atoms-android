@@ -1,6 +1,7 @@
 package com.neurospeech.uiatoms;
 
 import android.app.Activity;
+import android.databinding.Observable;
 import android.databinding.ObservableField;
 import android.view.View;
 
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 public class AtomViewModel
 {
 
-    
+
 
 
 
@@ -48,7 +49,24 @@ public class AtomViewModel
         closables.add(closeable);
     }
 
-    public void init(){
+    /***
+     * will be called in onCreate of activity/fragment
+     */
+    public void create(){
+
+    }
+
+    /**
+     * will be called in onResume method
+     */
+    public void resume(){
+
+    }
+
+    /**
+     * will be called in onPause method
+     */
+    public void pause(){
 
     }
 
@@ -110,4 +128,46 @@ public class AtomViewModel
     }
 
     private Broadcaster broadcaster;
+
+
+    private  AtomField privateWatch(boolean evalOnSetup, Funcs.Func0 func, AtomField... fields){
+
+        AtomField returnField = new AtomField<>();
+
+        for(AtomField af : fields){
+            Observable.OnPropertyChangedCallback changedCallback = new Observable.OnPropertyChangedCallback() {
+                @Override
+                public void onPropertyChanged(Observable sender, int propertyId) {
+                    try{
+                        returnField.set(func.call());
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                    }
+                }
+            };
+
+            af.addOnPropertyChangedCallback(changedCallback);
+
+            this.register(new ClosableAction(()->{
+                af.removeOnPropertyChangedCallback(changedCallback);
+            }));
+
+
+        }
+
+        if(evalOnSetup){
+            returnField.set(func.call());
+        }
+
+
+        return returnField;
+    }
+
+    public <T,T1> AtomField<T> watch(AtomField<T1> field, Funcs.Func1<T1,T> func){
+        return privateWatch(true, () -> func.call(field.get()), field );
+    }
+
+    public <T,T1,T2> AtomField<T> watch(AtomField<T1> field1, AtomField<T2> field2, Funcs.Func2<T1,T2,T> func){
+        return privateWatch(true, () -> func.call(field1.get(),field2.get()), field1,field2);
+    }
 }
