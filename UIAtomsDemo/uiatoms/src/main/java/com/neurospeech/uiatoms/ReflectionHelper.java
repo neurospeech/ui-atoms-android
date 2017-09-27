@@ -20,10 +20,19 @@ public class ReflectionHelper {
     {
         String key = object.getClass().getCanonicalName();
 
+        for(Object obj: parameters){
+            if(obj==null)
+                return;
+            key += ":" + obj.getClass().getCanonicalName();
+        }
+
+        Class c = object.getClass();
+
         Method method = members.getOrDefault(key,null);
         if(method==null){
             ArrayList<Class> paramTypes = new ArrayList<>();
-            for(Method m: object.getClass().getMethods()){
+            Method[] methods = object.getClass().getMethods();
+            for(Method m: methods){
                 if(m.getName().startsWith(prefix)){
                     if(isMatch(m.getParameterTypes(),parameters)){
                         method = m;
@@ -32,9 +41,11 @@ public class ReflectionHelper {
 
                 }
             }
-            if(method!=null){
+            if(method==null){
                 throw new RuntimeException("No method found with prefix "
                         + prefix + " for given parameters");
+            }else{
+                members.put(key,method);
             }
         }
         try {
@@ -46,11 +57,21 @@ public class ReflectionHelper {
 
     private static boolean isMatch(Class<?>[] parameterTypes, Object[] parameters) {
 
-        Stream<Class> ptypes = Linq.stream(parameters).select(c -> c.getClass());
 
-        for(Class pt: parameterTypes){
-            if(!ptypes.any( ptype -> ptype == pt )){
+        if(parameterTypes.length != parameters.length)
+            return false;
+
+        for(int i=0;i<parameterTypes.length;i++){
+            Class pt = parameterTypes[i];
+            Object v = parameters[i];
+            if(v==null)
                 return false;
+            Class p = v.getClass();
+
+            if(p != pt){
+                if(!pt.isAssignableFrom(p)){
+                    return false;
+                }
             }
         }
 

@@ -1,6 +1,7 @@
 package com.neurospeech.uiatoms;
 
 import android.app.Activity;
+import android.databinding.BaseObservable;
 import android.databinding.Observable;
 import android.databinding.ObservableField;
 import android.view.View;
@@ -130,40 +131,7 @@ public class AtomViewModel
     private Broadcaster broadcaster;
 
 
-    private  AtomField privateWatch(boolean evalOnSetup, Funcs.Func0 func, AtomField... fields){
-
-        AtomField returnField = new AtomField<>();
-
-        for(AtomField af : fields){
-            Observable.OnPropertyChangedCallback changedCallback = new Observable.OnPropertyChangedCallback() {
-                @Override
-                public void onPropertyChanged(Observable sender, int propertyId) {
-                    try{
-                        returnField.set(func.call());
-                    }catch (Exception ex){
-                        ex.printStackTrace();
-                    }
-                }
-            };
-
-            af.addOnPropertyChangedCallback(changedCallback);
-
-            this.register(new ClosableAction(()->{
-                af.removeOnPropertyChangedCallback(changedCallback);
-            }));
-
-
-        }
-
-        if(evalOnSetup){
-            returnField.set(func.call());
-        }
-
-
-        return returnField;
-    }
-
-    public <T> AtomWatcher<T> watch(AtomField... fields){
+    public <T> AtomWatcher<T> watch(BaseObservable... fields){
         AtomWatcher<T> watcher = new AtomWatcher<T>(fields);
         register(watcher);
         return watcher;

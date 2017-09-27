@@ -92,8 +92,8 @@ public class AtomNavigator {
         });
     }
 
-    public static void register(Application context, int modelId, int viewModelId){
-        navigator = new AtomNavigator(context);//, modelId, viewModelId);
+    public static void register(Application context){
+        navigator = new AtomNavigator(context);
     }
 
 

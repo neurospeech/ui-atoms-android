@@ -5,6 +5,7 @@ import android.databinding.ObservableField;
 import android.databinding.ObservableList;
 
 import com.neurospeech.uiatoms.AtomCommand;
+import com.neurospeech.uiatoms.AtomField;
 import com.neurospeech.uiatoms.AtomList;
 import com.neurospeech.uiatoms.AtomViewModel;
 import com.neurospeech.uiatomsdemo.models.Task;
@@ -19,7 +20,7 @@ public class TaskEditorViewModel extends AtomViewModel {
     /***
      * Represents error with the view model
      */
-    public final ObservableField<String> error = new ObservableField<>();
+     public final ObservableField<String> error = new ObservableField<>();
 
 
     /**
@@ -52,7 +53,9 @@ public class TaskEditorViewModel extends AtomViewModel {
 
         this.removeCommand =new AtomCommand<Task>( task -> onRemoveCommand(task));
 
-        
+//        this.error = this.watch<String>(newTask)
+//                .setup( () -> this.newTask.get().label.isEmpty() ? "Label cannot be empty" : "")
+//                .build();
 
     }
 
