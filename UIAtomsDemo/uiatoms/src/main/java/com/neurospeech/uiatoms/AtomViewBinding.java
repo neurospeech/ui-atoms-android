@@ -58,7 +58,7 @@ public class AtomViewBinding {
                 }
             } else {
                 if (this.activity instanceof AtomLifeCycleProvider) {
-                    e = ((AtomLifeCycleProvider) fragment).getLifeCycleElement();
+                    e = ((AtomLifeCycleProvider) activity).getLifeCycleElement();
                 }
             }
             if (e != null) {
