@@ -13,7 +13,7 @@ import java.util.ArrayList;
  * Created by ackav on 04-08-2017.
  */
 
-public class AtomViewModel
+public class AtomViewModel implements AtomLifeCycle
 {
 
 
@@ -50,26 +50,7 @@ public class AtomViewModel
         closables.add(closeable);
     }
 
-    /***
-     * will be called in onCreate of activity/fragment
-     */
-    public void create(){
 
-    }
-
-    /**
-     * will be called in onResume method
-     */
-    public void resume(){
-
-    }
-
-    /**
-     * will be called in onPause method
-     */
-    public void pause(){
-
-    }
 
     /***
      * Subscribe for channel when activity/fragment only when active.
@@ -114,6 +95,26 @@ public class AtomViewModel
                 ex.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public void onInit() {
+
+    }
+
+    @Override
+    public void onPause() {
+
+    }
+
+    @Override
+    public void onResume() {
+
+    }
+
+    @Override
+    public void onDispose() {
+        dispose();
     }
 
     public interface Broadcaster{
