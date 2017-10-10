@@ -1,5 +1,9 @@
 package com.neurospeech.uiatoms;
 
+import android.os.Build;
+import android.util.DebugUtils;
+import android.util.Log;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -14,7 +18,11 @@ import br.com.zbra.androidlinq.Stream;
 
 public class ReflectionHelper {
 
-    static HashMap<String,Method> members = new HashMap<>();
+    static HashMap<String,ReflectionMethod> members = new HashMap<>();
+
+    static class ReflectionMethod {
+        Method method;
+    }
 
     public static void run(Object object, String prefix, Object... parameters)
     {
@@ -28,28 +36,39 @@ public class ReflectionHelper {
 
         Class c = object.getClass();
 
-        Method method = members.getOrDefault(key,null);
+        ReflectionMethod method = members.getOrDefault(key,null);
         if(method==null){
             ArrayList<Class> paramTypes = new ArrayList<>();
             Method[] methods = object.getClass().getMethods();
             for(Method m: methods){
                 if(m.getName().startsWith(prefix)){
                     if(isMatch(m.getParameterTypes(),parameters)){
-                        method = m;
+                        method = new ReflectionMethod();
+                        method.method = m;
                         break;
                     }
 
                 }
             }
             if(method==null){
-                throw new RuntimeException("No method found with prefix "
-                        + prefix + " for given parameters");
+                method = new ReflectionMethod();
+
+                Log.w("ViewBinding",
+                        "WARNING !! No method found with prefix "
+                                + prefix
+                                + " for given parameters in class "
+                                + object.getClass().getCanonicalName()
+                                + " for key\r\n"
+                                + key);
+//                throw new RuntimeException("No method found with prefix "
+//                        + prefix + " for given parameters");
             }else{
                 members.put(key,method);
             }
         }
         try {
-            method.invoke(object,parameters);
+            if(method.method != null)
+                method.method.invoke(object,parameters);
         } catch (Exception e) {
             throw new RuntimeException("Failed running",e);
         }

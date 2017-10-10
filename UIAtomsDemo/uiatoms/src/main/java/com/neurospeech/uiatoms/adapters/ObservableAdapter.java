@@ -213,7 +213,7 @@ public class ObservableAdapter<T> extends RecyclerView.Adapter<ObservableAdapter
         public ObservableViewHolder(ViewDataBinding dataBinding) {
             super(dataBinding.getRoot());
             //dataBinding.setVariable(BR.item,this);
-            ReflectionHelper.run(dataBinding,"set",this);
+            //ReflectionHelper.run(dataBinding,"set",this);
             this.dataBinding = dataBinding;
         }
 

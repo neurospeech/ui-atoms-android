@@ -27,20 +27,24 @@ public class DI {
         register(forClass,forClass);
     }
 
-    public static <T> void register(Class<? extends T> tClass, Class<T> forClass){
+    public static <T> void register(Class<T> forClass, Class<? extends T> tClass){
         registry.put(forClass,new Registration(tClass, (scope) -> createScoped(forClass,tClass, global) ));
     }
 
-    public static <T> void registerScoped(Class<? extends T> tClass, Class<T> forClass){
+    public static <T> void registerScoped(Class<T> forClass, Class<? extends T> tClass){
         registry.put(forClass,new Registration(tClass, (scope) -> createScoped(forClass,tClass, (DIScope) scope) ));
     }
 
-    public static <T> void registerTransient(Class<? extends T> tClass, Class<T> forClass){
+    public static <T> void registerTransient(Class<T> forClass, Class<? extends T> tClass){
         registry.put(forClass,new Registration(tClass,(s) -> create(tClass,null)));
     }
 
-    public static <T> void put(Class<? extends T> tClass, T value){
+    public static <T> void put(Class<T> tClass, T value){
         registry.put(tClass, new Registration(tClass, s-> value));
+    }
+
+    public static <T> void put(Class<T> tClass, Funcs.Func0<? extends T> factory){
+        registry.put(tClass, new Registration(tClass, s -> factory.call()));
     }
 
     public static <T> T resolve(Class<T> tClass){

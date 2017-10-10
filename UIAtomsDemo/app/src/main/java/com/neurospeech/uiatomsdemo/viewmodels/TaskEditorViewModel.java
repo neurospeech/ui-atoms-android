@@ -8,6 +8,7 @@ import com.neurospeech.uiatoms.AtomCommand;
 import com.neurospeech.uiatoms.AtomField;
 import com.neurospeech.uiatoms.AtomList;
 import com.neurospeech.uiatoms.AtomViewModel;
+import com.neurospeech.uiatomsdemo.BR;
 import com.neurospeech.uiatomsdemo.models.Task;
 
 /**
@@ -56,6 +57,9 @@ public class TaskEditorViewModel extends AtomViewModel {
 //        this.error = this.watch<String>(newTask)
 //                .setup( () -> this.newTask.get().label.isEmpty() ? "Label cannot be empty" : "")
 //                .build();
+
+
+
 
     }
 
