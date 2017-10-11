@@ -155,11 +155,15 @@ public class AtomListView extends RecyclerView {
     public static <T> void setSelectedItems(
             AtomListView view,
             @Nullable ObservableList<T> list){
+        if(view.getSelectedItems() == list)
+            return;
         view.setSelectedItems(list);
     }
 
     @BindingAdapter("items")
     public static <T> void adapterSetItems(AtomListView view, ObservableList<T> items){
+        if(view.getItems() == items)
+            return;
         view.setItems(items);
         if(view.getLayoutManager() == null){
             LinearLayoutManager linearLayoutManager =
@@ -198,6 +202,8 @@ public class AtomListView extends RecyclerView {
 
     @BindingAdapter("viewModel")
     public static void adapterSetViewModel(AtomListView view,Object viewModel){
+        if(view.getViewModel() == viewModel)
+            return;
         view.setViewModel(viewModel);
     }
 
@@ -213,16 +219,13 @@ public class AtomListView extends RecyclerView {
 
         public void notifySelectedItems(){
 
-            int n = getVerticalScrollbarPosition();
-            ///int n = getScrollY();
             notifyDataSetChanged();
-            setVerticalScrollbarPosition(n);
         }
 
         public ObservableAdapter() {
             super();
 
-            this.setHasStableIds(true);
+            //this.setHasStableIds(true);
 
             this.selectionCallback = new ObservableList.OnListChangedCallback<ObservableList>(){
                 @Override
@@ -274,7 +277,8 @@ public class AtomListView extends RecyclerView {
 
                 @Override
                 public void onItemRangeRemoved(ObservableList ts, int i, int i1) {
-                    notifyItemRangeRemoved(i,i1);
+                    //notifyItemRangeRemoved(i,i1);
+                    notifyDataSetChanged();
                 }
             };
 
@@ -405,14 +409,13 @@ public class AtomListView extends RecyclerView {
                     try {
                         ivh.updateSelected = false;
                         boolean isSelected = selectedItems.contains(item);
-                        if(isSelected != ivh.itemModel.selected.get()) {
-                            ivh.itemModel.selected.set(isSelected);
-                        }
+                        ivh.itemModel.selected.set(isSelected);
                     } finally {
                         ivh.updateSelected = true;
                     }
                 }
             }
+            holder.dataBinding.executePendingBindings();
         }
 
 

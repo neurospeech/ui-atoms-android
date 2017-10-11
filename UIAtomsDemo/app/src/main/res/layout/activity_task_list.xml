@@ -50,13 +50,14 @@
         <com.neurospeech.uiatoms.AtomListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            atom:items="@{viewModel.tasks}"
-            atom:layout="@{R.layout.item_task}"
-            atom:viewModel="@{viewModel}"
-            atom:itemHeader="@{ item -> viewModel.getHeader(item) }"
-            atom:selectedItems="@{ viewModel.selectedTasks }"
-            atom:headerLayout="@{ R.layout.list_header_task }"
-            atom:footerLayout="@{ R.layout.list_footer_task }"
+            app:items="@{viewModel.tasks}"
+            app:layout="@{R.layout.item_task}"
+            app:viewModel="@{viewModel}"
+            app:itemHeader="@{ item -> viewModel.getHeader(item) }"
+            app:selectedItems="@{ viewModel.selectedTasks }"
+            app:headerLayout="@{ R.layout.list_header_task }"
+            app:footerLayout="@{ R.layout.list_footer_task }"
+            app:allowMultipleSelection="@{true}"
             tools:listitem="@layout/item_task"></com.neurospeech.uiatoms.AtomListView>
 
     </LinearLayout>
