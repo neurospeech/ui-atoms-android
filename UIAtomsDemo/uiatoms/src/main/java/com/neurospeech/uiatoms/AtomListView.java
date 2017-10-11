@@ -3,29 +3,18 @@ package com.neurospeech.uiatoms;
 import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
-import android.databinding.InverseBindingListener;
 import android.databinding.Observable;
-import android.databinding.ObservableArrayList;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableList;
 import android.databinding.ViewDataBinding;
-import android.os.Build;
 import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 /**
  * Created by on 05-07-2017.
@@ -39,6 +28,7 @@ public class AtomListView extends RecyclerView {
 
     public void setSelectedItems(@Nullable ObservableList selectedItems) {
         this.selectedItems = selectedItems;
+        setAdapter(new ObservableAdapter());
     }
 
     private ObservableList selectedItems = null;
@@ -221,33 +211,40 @@ public class AtomListView extends RecyclerView {
         private final ObservableList.OnListChangedCallback<ObservableList> selectionCallback;
         private final ObservableList.OnListChangedCallback<ObservableList> callback;
 
+        public void notifySelectedItems(){
+
+            notifyItemRangeChanged(0, getItemCount());
+        }
+
         public ObservableAdapter() {
             super();
+
+            this.setHasStableIds(true);
 
             this.selectionCallback = new ObservableList.OnListChangedCallback<ObservableList>(){
                 @Override
                 public void onChanged(ObservableList sender) {
-                    notifyDataSetChanged();
+                    notifySelectedItems();
                 }
 
                 @Override
                 public void onItemRangeChanged(ObservableList sender, int positionStart, int itemCount) {
-                    notifyDataSetChanged();
+                    notifySelectedItems();
                 }
 
                 @Override
                 public void onItemRangeInserted(ObservableList sender, int positionStart, int itemCount) {
-                    notifyDataSetChanged();
+                    notifySelectedItems();
                 }
 
                 @Override
                 public void onItemRangeMoved(ObservableList sender, int fromPosition, int toPosition, int itemCount) {
-                    notifyDataSetChanged();
+                    notifySelectedItems();
                 }
 
                 @Override
                 public void onItemRangeRemoved(ObservableList sender, int positionStart, int itemCount) {
-                    notifyDataSetChanged();
+                    notifySelectedItems();
                 }
             };
 
@@ -277,6 +274,10 @@ public class AtomListView extends RecyclerView {
                     notifyItemRangeRemoved(i,i1);
                 }
             };
+
+            if(selectedItems!=null){
+                setupSelectionCallback();
+            }
         }
 
         ClosableAction removeSelectionCallback;
@@ -321,9 +322,10 @@ public class AtomListView extends RecyclerView {
             if(headerLayoutId>0){
                 if(position==0)
                     return headerLayoutId;
-                if(position>items.size())
+                position--;
+                if(position==items.size())
                     return footerLayoutId;
-                return getItemLayout(position-1);
+                return getItemLayout(position);
             }
 
             if(position < items.size())
@@ -332,7 +334,7 @@ public class AtomListView extends RecyclerView {
             if(position == items.size() && footerLayoutId > 0)
                 return footerLayoutId;
 
-            return super.getItemViewType(position);
+            return getItemLayout(position);
         }
 
         private int getItemLayout(int i) {
@@ -345,7 +347,7 @@ public class AtomListView extends RecyclerView {
         @Override
         public BindableViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             ViewDataBinding binding = DataBindingUtil.inflate(LayoutInflater.from(getContext()),viewType, parent, false);
-            if(viewType == headerLayoutId){
+            if(viewType == headerLayoutId || viewType == footerLayoutId){
                 return new HeaderFooterViewHolder(binding);
             }
             return new ItemViewHolder(binding) ;
@@ -353,7 +355,6 @@ public class AtomListView extends RecyclerView {
 
         @Override
         public void onBindViewHolder(BindableViewHolder holder, int position) {
-
 
             ReflectionHelper.run(holder.dataBinding,"set",viewModel);
             if(holder instanceof ItemViewHolder){

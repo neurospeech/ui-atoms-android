@@ -54,6 +54,7 @@
             atom:layout="@{R.layout.item_task}"
             atom:viewModel="@{viewModel}"
             atom:itemHeader="@{ item -> viewModel.getHeader(item) }"
+            atom:selectedItems="@{ viewModel.selectedTasks }"
             atom:headerLayout="@{ R.layout.list_header_task }"
             atom:footerLayout="@{ R.layout.list_footer_task }"
             tools:listitem="@layout/item_task"></com.neurospeech.uiatoms.AtomListView>

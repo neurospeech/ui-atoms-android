@@ -16,6 +16,7 @@
             type="com.neurospeech.uiatoms.AtomListView.ItemModel"/>
 
         <import type="android.view.View"/>
+        <import type="com.neurospeech.uiatomsdemo.R"/>
 
 
     </data>
@@ -33,9 +34,16 @@
             />
 
         <LinearLayout
-            android:orientation="horizontal" android:layout_width="match_parent"
+            android:background="@{ itemModel.selected ? @drawable/list_selected_item_background : @drawable/list_item_background }"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="@={ itemModel.selected }"
+                />
 
             <TextView
                 android:layout_width="0dp"

@@ -75,6 +75,14 @@ public class TaskService {
                         new Task("Task 4", "Resolved"),
                         new Task("Task 5", "Resolved"),
                         new Task("Task 6", "Resolved"),
+                        new Task("Task 7", "Closed"),
+                        new Task("Task 8", "Closed"),
+                        new Task("Task 9", "Closed"),
+                        new Task("Task 10", "Closed"),
+                        new Task("Task 11", "Closed"),
+                        new Task("Task 12", "Closed"),
+                        new Task("Task 13", "Closed"),
+                        new Task("Task 14", "Closed"),
                 });
             }
         };

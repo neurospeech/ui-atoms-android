@@ -31,6 +31,8 @@ public class TaskEditorViewModel extends AtomViewModel {
      */
     public final AtomList<Task> tasks = new AtomList<>();
 
+    public final AtomList<Task> selectedTasks = new AtomList<>();
+
     /**
      * Model for storing new task to be added
      */
