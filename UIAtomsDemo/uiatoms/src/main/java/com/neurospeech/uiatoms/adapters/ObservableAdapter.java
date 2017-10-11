@@ -234,7 +234,7 @@ public class ObservableAdapter<T> extends RecyclerView.Adapter<ObservableAdapter
     }
 
 
-    @BindingAdapter(value = {"items","selectedItems", "allowMultipleSelection", "layout","viewModel"},requireAll = false)
+    //@BindingAdapter(value = {"items","selectedItems", "allowMultipleSelection", "layout","viewModel"},requireAll = false)
     public static <T> void setAdapter(
             RecyclerView view,
             ObservableList<T> items,
@@ -260,7 +260,7 @@ public class ObservableAdapter<T> extends RecyclerView.Adapter<ObservableAdapter
     }
 
 
-    @BindingAdapter(value = {"items","allowMultipleSelection", "layout", "viewModel"},requireAll = false)
+    //@BindingAdapter(value = {"items","allowMultipleSelection", "layout", "viewModel"},requireAll = false)
     public static <T> void setAdapter(RecyclerView view, T[] items,Boolean allowMultipleSelection,int layoutResId, Object viewModel) {
 
         if(items==null){

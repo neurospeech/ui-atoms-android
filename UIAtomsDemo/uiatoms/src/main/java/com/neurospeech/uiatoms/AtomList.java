@@ -51,6 +51,18 @@ public class AtomList<T>extends ArrayList<T> implements ObservableList<T> {
         return added;
     }
 
+    public boolean addAll(T[] collection){
+        int oldSize = size();
+        boolean added = false;
+        for(T item:collection){
+            super.add(item);
+        }
+        if(added){
+            notifyAdd(oldSize, size() - oldSize);
+        }
+        return added;
+    }
+
     @Override
     public boolean addAll(int index, Collection<? extends T> collection) {
         boolean added = super.addAll(index, collection);

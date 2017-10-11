@@ -8,8 +8,10 @@ import com.neurospeech.uiatoms.AtomCommand;
 import com.neurospeech.uiatoms.AtomField;
 import com.neurospeech.uiatoms.AtomList;
 import com.neurospeech.uiatoms.AtomViewModel;
+import com.neurospeech.uiatoms.DI;
 import com.neurospeech.uiatomsdemo.BR;
 import com.neurospeech.uiatomsdemo.models.Task;
+import com.neurospeech.uiatomsdemo.services.TaskServiceAPI;
 
 /**
  * Created by akash.kava on 23-08-2017.
@@ -87,4 +89,24 @@ public class TaskEditorViewModel extends AtomViewModel {
     }
 
 
+    @Override
+    public void onInit() {
+        super.onInit();
+
+
+        runAsync(() -> loadTasks());
+    }
+
+    public Object getHeader(Object item){
+        return ((Task)item).status;
+    }
+
+    private void loadTasks(){
+        try {
+            Task[] taskArray = DI.resolve(TaskServiceAPI.class).getTasks().execute().body();
+            tasks.addAll(taskArray);
+        }catch (Exception ex){
+
+        }
+    }
 }

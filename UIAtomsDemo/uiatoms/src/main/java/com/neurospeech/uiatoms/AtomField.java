@@ -2,6 +2,7 @@ package com.neurospeech.uiatoms;
 
 import android.databinding.BaseObservable;
 import android.databinding.ObservableBoolean;
+import android.os.Handler;
 
 import java.util.Objects;
 
@@ -15,12 +16,21 @@ public class AtomField<T> extends BaseObservable {
         return _value;
     }
 
+    private boolean isChanging = false;
+
     public void set(T _value) {
-        boolean changed = !Objects.equals(this._value,_value);
-        this._value = _value;
-        if(changed){
-            this.notifyChange();
-        }
+        if(isChanging)
+            return;
+
+        isChanging = true;
+            boolean changed = !Atom.equals(this._value,_value);
+            this._value = _value;
+            if(changed){
+                DI.resolve(Handler.class).post(()-> {
+                    this.notifyChange();
+                    isChanging = false;
+                });
+            }
     }
 
     private T _value;

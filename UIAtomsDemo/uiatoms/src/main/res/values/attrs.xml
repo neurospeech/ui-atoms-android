@@ -9,4 +9,11 @@
         <attr name="clickCommand" format="reference" />
         <attr name="commandParameter" format="reference" />
     </declare-styleable>
+    <declare-styleable name="AtomListView">
+        <attr name="itemHeader" format="reference"/>
+        <attr name="itemHeaderLayout" format="reference"/>
+        <attr name="headerLayout" format="reference"/>
+        <attr name="footerLayout" format="reference"/>
+        <attr name="allowMultipleSelection" format="reference"/>
+    </declare-styleable>
 </resources>

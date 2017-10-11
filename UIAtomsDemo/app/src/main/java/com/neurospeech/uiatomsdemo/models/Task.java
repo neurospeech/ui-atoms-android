@@ -11,8 +11,18 @@ import android.databinding.Bindable;
 
 public class Task {
 
+    public Task() {
+        super();
+    }
+
+    public Task(String label, String status){
+        super();
+        this.label = label;
+        this.status = status;
+    }
+
     public String label;
 
-    public boolean finished;
+    public String status;
 
 }

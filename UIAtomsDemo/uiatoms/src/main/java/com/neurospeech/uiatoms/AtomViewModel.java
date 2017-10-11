@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.databinding.BaseObservable;
 import android.databinding.Observable;
 import android.databinding.ObservableField;
+import android.os.AsyncTask;
 import android.view.View;
 
 import java.io.Closeable;
@@ -136,6 +137,18 @@ public class AtomViewModel implements AtomLifeCycle
         AtomWatcher<T> watcher = new AtomWatcher<T>(fields);
         register(watcher);
         return watcher;
+    }
+
+
+    public void runAsync(Runnable runnable){
+        (new AsyncTask<Object,Object,Object>(){
+
+            @Override
+            protected Object doInBackground(Object... objects) {
+                runnable.run();
+                return null;
+            }
+        }).execute(this);
     }
 
 }

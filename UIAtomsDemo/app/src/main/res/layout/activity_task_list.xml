@@ -47,13 +47,16 @@
         </LinearLayout>
 
 
-        <android.support.v7.widget.RecyclerView
+        <com.neurospeech.uiatoms.AtomListView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             atom:items="@{viewModel.tasks}"
             atom:layout="@{R.layout.item_task}"
             atom:viewModel="@{viewModel}"
-            tools:listitem="@layout/item_task"></android.support.v7.widget.RecyclerView>
+            atom:itemHeader="@{ item -> viewModel.getHeader(item) }"
+            atom:headerLayout="@{ R.layout.list_header_task }"
+            atom:footerLayout="@{ R.layout.list_footer_task }"
+            tools:listitem="@layout/item_task"></com.neurospeech.uiatoms.AtomListView>
 
     </LinearLayout>
 </layout>

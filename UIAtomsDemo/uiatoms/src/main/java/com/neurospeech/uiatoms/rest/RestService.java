@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import com.neurospeech.uiatoms.rest.json.PromiseConverterFactory;
 
 import okhttp3.OkHttpClient;
+import retrofit2.CallAdapter;
 import retrofit2.Retrofit;
 
 /**
@@ -36,7 +37,10 @@ public abstract class RestService {
         builder.baseUrl(baseUrl);
         builder.client(client);
         builder.addConverterFactory(createConverterFactory());
-        builder.addCallAdapterFactory(createCallAdapterFactory());
+        CallAdapter.Factory factory = createCallAdapterFactory();
+        if(factory!=null) {
+            builder.addCallAdapterFactory(factory);
+        }
 
         retrofit = builder.build();
 
@@ -45,7 +49,7 @@ public abstract class RestService {
     }
 
     @NonNull
-    protected PromiseConverterFactory createCallAdapterFactory() {
+    protected CallAdapter.Factory  createCallAdapterFactory() {
         return PromiseConverterFactory.create();
     }
 
