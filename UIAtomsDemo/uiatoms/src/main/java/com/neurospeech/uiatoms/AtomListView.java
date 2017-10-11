@@ -213,7 +213,10 @@ public class AtomListView extends RecyclerView {
 
         public void notifySelectedItems(){
 
-            notifyItemRangeChanged(0, getItemCount());
+            int n = getVerticalScrollbarPosition();
+            ///int n = getScrollY();
+            notifyDataSetChanged();
+            setVerticalScrollbarPosition(n);
         }
 
         public ObservableAdapter() {
