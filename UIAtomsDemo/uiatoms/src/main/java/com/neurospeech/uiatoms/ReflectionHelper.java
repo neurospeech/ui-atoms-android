@@ -36,7 +36,7 @@ public class ReflectionHelper {
 
         Class c = object.getClass();
 
-        ReflectionMethod method = members.getOrDefault(key,null);
+        ReflectionMethod method = getOrDefault(members,key,null);
         if(method==null){
             ArrayList<Class> paramTypes = new ArrayList<>();
             Method[] methods = object.getClass().getMethods();
@@ -72,6 +72,13 @@ public class ReflectionHelper {
         } catch (Exception e) {
             throw new RuntimeException("Failed running",e);
         }
+    }
+
+    private static <TKey,TR> TR getOrDefault(HashMap<TKey, TR> members, TKey key, TR o) {
+        TR r = members.get(key);
+        if(r==null)
+            return o;
+        return r;
     }
 
     private static boolean isMatch(Class<?>[] parameterTypes, Object[] parameters) {
