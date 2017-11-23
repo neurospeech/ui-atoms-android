@@ -36,7 +36,7 @@ public class ReflectionHelper {
 
         Class c = object.getClass();
 
-        ReflectionMethod method = getOrDefault(members,key,null);
+        ReflectionMethod method = getOrDefaultValue(members,key,null);
         if(method==null){
             ArrayList<Class> paramTypes = new ArrayList<>();
             Method[] methods = object.getClass().getMethods();
@@ -74,7 +74,7 @@ public class ReflectionHelper {
         }
     }
 
-    private static <TKey,TR> TR getOrDefault(HashMap<TKey, TR> members, TKey key, TR o) {
+    private static <TKey,TR> TR getOrDefaultValue(HashMap<TKey, TR> members, TKey key, TR o) {
         TR r = members.get(key);
         if(r==null)
             return o;
