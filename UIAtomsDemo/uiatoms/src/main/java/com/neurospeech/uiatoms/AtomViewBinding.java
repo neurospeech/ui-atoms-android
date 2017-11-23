@@ -38,6 +38,7 @@ public class AtomViewBinding {
 
     public AtomViewBinding(android.app.Fragment fragment){
         this.fragment = fragment;
+        this.activity = fragment.getActivity();
     }
 
     public static AtomViewBinding from(Activity activity){
