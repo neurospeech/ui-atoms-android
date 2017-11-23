@@ -21,7 +21,7 @@ import java.io.Serializable;
 
 public class AtomViewBinding {
 
-    private Fragment fragment;
+    private Object fragment;
     private Activity activity;
     private AtomViewModel viewModel;
     private ViewDataBinding view;
@@ -36,11 +36,19 @@ public class AtomViewBinding {
         this.activity = fragment.getActivity();
     }
 
+    public AtomViewBinding(android.app.Fragment fragment){
+        this.fragment = fragment;
+    }
+
     public static AtomViewBinding from(Activity activity){
         return new AtomViewBinding(activity);
     }
 
     public static AtomViewBinding from(Fragment fragment){
+        return new AtomViewBinding(fragment);
+    }
+
+    public static AtomViewBinding from(android.app.Fragment fragment){
         return new AtomViewBinding(fragment);
     }
 
