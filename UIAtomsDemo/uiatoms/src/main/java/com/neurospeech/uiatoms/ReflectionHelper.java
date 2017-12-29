@@ -36,7 +36,7 @@ public class ReflectionHelper {
 
         Class c = object.getClass();
 
-        ReflectionMethod method = getOrDefaultValue(members,key,null);
+        ReflectionMethod method = HashMapEx.getOrDefaultValue(members,key,null);
         if(method==null){
             ArrayList<Class> paramTypes = new ArrayList<>();
             Method[] methods = object.getClass().getMethods();
@@ -74,12 +74,6 @@ public class ReflectionHelper {
         }
     }
 
-    private static <TKey,TR> TR getOrDefaultValue(HashMap<TKey, TR> members, TKey key, TR o) {
-        TR r = members.get(key);
-        if(r==null)
-            return o;
-        return r;
-    }
 
     private static boolean isMatch(Class<?>[] parameterTypes, Object[] parameters) {
 

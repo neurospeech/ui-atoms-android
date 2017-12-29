@@ -63,7 +63,7 @@ public class DI {
 
     private static Object createScoped(Class key, Class creator, DIScope scope)
     {
-        Object result = scope.instances.getOrDefault(key,null);
+        Object result = HashMapEx.getOrDefaultValue(scope.instances,key,null);
         if(result == null){
             result = create(creator,scope);
         }
