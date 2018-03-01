@@ -56,6 +56,7 @@ public class AtomList<T>extends ArrayList<T> implements ObservableList<T> {
         boolean added = false;
         for(T item:collection){
             super.add(item);
+            added = true;
         }
         if(added){
             notifyAdd(oldSize, size() - oldSize);
